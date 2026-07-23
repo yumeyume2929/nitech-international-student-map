@@ -5,6 +5,12 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0b5d55">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="NITech Life Map">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <meta name="description" content="名古屋工業大学周辺と名古屋市内の代表的な飲食店・買い物施設を、留学生向けに日本語と英語で紹介する生活支援マップです。">
   <title>NITech International Student Life Map - Nagoya</title>
   <link rel="stylesheet" href="css/leaflet.css">
@@ -14,6 +20,7 @@
   <link rel="stylesheet" href="css/fontawesome-all.min.css">
   <link rel="stylesheet" href="css/app.css">
   <link rel="stylesheet" href="css/mobile-fix-v3.css">
+  <link rel="stylesheet" href="css/pwa.css">
 </head>
 <body>
   <div id="app">
@@ -25,9 +32,14 @@
           <p id="appSubtitle">名工大周辺と名古屋市内の食事・買い物情報</p>
         </div>
       </div>
-      <button id="languageToggle" class="language-toggle" type="button" aria-label="Switch language">
-        <i class="fas fa-language"></i><span>English</span>
-      </button>
+      <div class="header-actions">
+        <button id="installAppButton" class="install-app-button" type="button" aria-label="アプリを追加" hidden>
+          <i class="fas fa-download"></i><span id="installAppText">アプリを追加</span>
+        </button>
+        <button id="languageToggle" class="language-toggle" type="button" aria-label="Switch language">
+          <i class="fas fa-language"></i><span>English</span>
+        </button>
+      </div>
     </header>
 
     <main class="app-main">
@@ -78,10 +90,24 @@
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
+  <div id="installHelp" class="install-help-backdrop" hidden>
+    <section class="install-help-dialog" role="dialog" aria-modal="true" aria-labelledby="installHelpTitle">
+      <div class="install-help-head">
+        <img src="icons/icon-192.png" alt="">
+        <h2 id="installHelpTitle">ホーム画面にアプリを追加</h2>
+      </div>
+      <div class="install-help-body">
+        <div id="installHelpBody"></div>
+        <button id="installHelpClose" class="install-help-close" type="button">閉じる</button>
+      </div>
+    </section>
+  </div>
+
   <script src="js/leaflet.js"></script>
   <script src="js/leaflet.markercluster.js"></script>
   <script src="js/L.Control.Locate.min.js"></script>
   <script src="data/facilities.js"></script>
   <script src="js/app-mobile-v3.js"></script>
+  <script src="js/pwa-install.js"></script>
 </body>
 </html>
