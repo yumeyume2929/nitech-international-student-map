@@ -248,7 +248,7 @@
       const c = feature.geometry.coordinates;
       const marker = L.marker([c[1], c[0]], { icon: createIcon(feature), title: displayName(feature) });
       marker.feature = feature;
-      marker.bindPopup(function () { return popupHtml(feature); }, { maxWidth: 380 });
+      marker.bindPopup(function () { return popupHtml(feature); }, { maxWidth: 380, autoPan: false, keepInView: false });
       marker.on('click', function () {
         selectedUid = uidOf(feature);
         highlightCard();
@@ -364,9 +364,12 @@
     selectedUid = uid;
     const marker = markerByUid.get(uid);
     if (!marker) return;
-    const latlng = marker.getLatLng();
-    map.flyTo(latlng, Math.max(map.getZoom(), 16), { duration: .55 });
-    cluster.zoomToShowLayer(marker, function () { marker.openPopup(); });
+
+    // Do not combine flyTo() and zoomToShowLayer(). On mobile, the two
+    // animations can race and make the map appear to jump to a wrong place.
+    cluster.zoomToShowLayer(marker, function () {
+      marker.openPopup();
+    });
     highlightCard();
   }
   function updateMapLayers() {
