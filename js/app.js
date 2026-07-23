@@ -1,86 +1,101 @@
-
 (function () {
   'use strict';
 
-  const data = (typeof json__1 !== 'undefined' && json__1.features) ? json__1.features : [];
-  const initialBounds = [[35.14745325407118, 136.90293875830787], [35.16759260768199, 136.9370799185673]];
-  const categoryOrder = ['食事', '食料品', '日用品', '生活サービス', '交流・学習'];
+  const data = (typeof json_facilities !== 'undefined' && json_facilities.features) ? json_facilities.features : [];
+  const categoryOrder = ['食事', '食料品', '日用品', '日用品・買い物', '商業施設', 'その他'];
   const categoryConfig = {
     '食事': { color: '#e85d04', icon: 'fa-utensils', ja: '食事', en: 'Food' },
     '食料品': { color: '#218c74', icon: 'fa-shopping-basket', ja: '食料品', en: 'Groceries' },
-    '日用品': { color: '#3677a8', icon: 'fa-shopping-bag', ja: '日用品', en: 'Daily goods' },
-    '生活サービス': { color: '#7a4fb5', icon: 'fa-concierge-bell', ja: '生活サービス', en: 'Life services' },
-    '交流・学習': { color: '#c28a05', icon: 'fa-users', ja: '交流・学習', en: 'Community' },
+    '日用品': { color: '#3677a8', icon: 'fa-prescription-bottle-alt', ja: '日用品', en: 'Daily goods' },
+    '日用品・買い物': { color: '#7a4fb5', icon: 'fa-shopping-bag', ja: '日用品・買い物', en: 'Shopping & daily goods' },
+    '商業施設': { color: '#c43d78', icon: 'fa-store', ja: '商業施設', en: 'Shopping centers' },
     'その他': { color: '#65747a', icon: 'fa-map-marker-alt', ja: 'その他', en: 'Other' }
+  };
+  const scopeOrder = ['all', '名工大周辺', '名古屋市代表'];
+  const scopeConfig = {
+    'all': { color: '#0b5d55', icon: 'fa-globe-asia', ja: 'すべて', en: 'All' },
+    '名工大周辺': { color: '#147d70', icon: 'fa-university', ja: '名工大周辺', en: 'Near NITech' },
+    '名古屋市代表': { color: '#7a4fb5', icon: 'fa-city', ja: '名古屋市内', en: 'Nagoya highlights' }
   };
 
   const uiText = {
     ja: {
       title: '留学生向け生活支援マップ',
-      subtitle: '名古屋工業大学周辺の食事・買い物情報',
+      subtitle: '名工大周辺と名古屋市内の食事・買い物情報',
       language: 'English',
-      search: '店名・住所で検索',
+      search: '店名・エリア・駅名で検索',
+      scope: '表示範囲',
       category: 'カテゴリ',
-      reset: 'すべて表示',
+      reset: 'すべて解除',
       unit: '件の施設',
-      sort: '名工大からの徒歩時間順',
+      sort: 'おすすめ順',
       notice: '営業時間・対応状況は変更される場合があります。利用前に公式情報をご確認ください。',
-      fitAll: '全施設',
-      walk: '徒歩',
-      min: '分',
+      fitAll: '表示中の全施設',
+      distance: '名工大から',
+      km: 'km',
       price: '価格帯',
       hours: '営業時間',
-      closed: '定休日',
-      payment: '支払方法',
       address: '住所',
-      english: '英語対応',
+      station: '最寄駅',
+      area: 'エリア',
+      ward: '区',
+      recommended: 'おすすめ',
       vegetarian: 'ベジタリアン',
       halal: 'ハラール',
+      note: '備考',
       official: '公式情報',
       route: '徒歩ルート',
       noResults: '条件に一致する施設がありません。',
-      allShown: 'すべての施設を表示しました。',
+      allShown: 'すべての絞り込みを解除しました。',
       locationTitle: '現在地',
-      locationError: '現在地を取得できませんでした。HTTPSで公開すると利用しやすくなります。'
+      locationError: '現在地を取得できませんでした。HTTPSで公開すると利用しやすくなります。',
+      scopeNear: '名工大周辺',
+      scopeCity: '名古屋市内代表'
     },
     en: {
       title: 'International Student Life Map',
-      subtitle: 'Food, shopping and useful services near NITech',
+      subtitle: 'Food and shopping near NITech and across Nagoya',
       language: '日本語',
-      search: 'Search by name or address',
+      search: 'Search by name, area or station',
+      scope: 'Map area',
       category: 'Categories',
-      reset: 'Show all',
+      reset: 'Clear filters',
       unit: ' places',
-      sort: 'Sorted by walking time from NITech',
-      notice: 'Opening hours and services may change. Please check the official information before visiting.',
-      fitAll: 'All places',
-      walk: 'Walk',
-      min: 'min',
+      sort: 'Recommended order',
+      notice: 'Opening hours and services may change. Please check official information before visiting.',
+      fitAll: 'All visible places',
+      distance: 'From NITech',
+      km: 'km',
       price: 'Price',
       hours: 'Hours',
-      closed: 'Closed',
-      payment: 'Payment',
       address: 'Address',
-      english: 'English support',
+      station: 'Nearest station',
+      area: 'Area',
+      ward: 'Ward',
+      recommended: 'Recommended',
       vegetarian: 'Vegetarian',
       halal: 'Halal',
+      note: 'Note',
       official: 'Official site',
       route: 'Walking route',
       noResults: 'No places match the current filters.',
-      allShown: 'All places are shown.',
+      allShown: 'All filters have been cleared.',
       locationTitle: 'Your location',
-      locationError: 'Your location could not be obtained. This feature works best when the map is published over HTTPS.'
+      locationError: 'Your location could not be obtained. This feature works best over HTTPS.',
+      scopeNear: 'Near NITech',
+      scopeCity: 'Nagoya highlight'
     }
   };
 
   let language = localStorage.getItem('nitemap-language') || 'ja';
   let selectedCategory = 'all';
+  let selectedScope = 'all';
   let query = '';
-  let selectedFid = null;
+  let selectedUid = null;
   let visibleFeatures = [];
-  const markerByFid = new Map();
+  const markerByUid = new Map();
 
-  const map = L.map('map', { zoomControl: true, minZoom: 11, maxZoom: 19 }).fitBounds(initialBounds);
+  const map = L.map('map', { zoomControl: true, minZoom: 9, maxZoom: 19 }).setView([35.1709, 136.9066], 12);
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '&copy; OpenStreetMap contributors'
@@ -89,7 +104,7 @@
   const cluster = L.markerClusterGroup({
     showCoverageOnHover: false,
     spiderfyOnMaxZoom: true,
-    maxClusterRadius: 45,
+    maxClusterRadius: 46,
     disableClusteringAtZoom: 18
   }).addTo(map);
 
@@ -101,7 +116,6 @@
     keepCurrentZoomLevel: false,
     showPopup: false
   }).addTo(map);
-
   map.on('locationerror', function () { showToast(uiText[language].locationError); });
 
   const els = {
@@ -111,6 +125,8 @@
     languageText: document.querySelector('#languageToggle span'),
     search: document.getElementById('facilitySearch'),
     clearSearch: document.getElementById('clearSearch'),
+    scopeHeading: document.getElementById('scopeHeading'),
+    scopes: document.getElementById('scopeFilters'),
     categoryHeading: document.getElementById('categoryHeading'),
     resetFilters: document.getElementById('resetFilters'),
     categories: document.getElementById('categoryFilters'),
@@ -132,49 +148,51 @@
     });
   }
 
+  function uidOf(feature) { return String(feature.properties.uid || feature.properties.id || feature.properties.fid); }
   function categoryOf(feature) {
     const c = feature.properties.major_category || 'その他';
     return categoryConfig[c] ? c : 'その他';
   }
-
   function configFor(feature) { return categoryConfig[categoryOf(feature)]; }
-
+  function scopeOf(feature) { return feature.properties.scope || '名古屋市代表'; }
+  function scopeLabel(feature) {
+    const cfg = scopeConfig[scopeOf(feature)] || scopeConfig['名古屋市代表'];
+    return language === 'en' ? cfg.en : cfg.ja;
+  }
   function displayName(feature) {
     const p = feature.properties;
     return language === 'en' ? (p.name_en || p.name_ja || '') : (p.name_ja || p.name_en || '');
   }
-
   function secondaryName(feature) {
     const p = feature.properties;
     return language === 'en' ? (p.name_ja || '') : (p.name_en || '');
   }
-
   function description(feature) {
     const p = feature.properties;
     return language === 'en' ? (p.description_en || p.description_ja || '') : (p.description_ja || p.description_en || '');
   }
-
   function translatedValue(value) {
     if (language === 'ja' || !value) return value || '';
     const dict = {
-      '未確認': 'Not confirmed', '一部対応': 'Some options', '対応': 'Available',
-      '簡単な英語対応可': 'Basic English may be available', '英語メニューあり': 'English menu available',
-      '日本語のみ': 'Japanese only', 'あり': 'Available', '無休': 'Open daily', '口頭確認': 'Ask staff'
+      '未確認': 'Not confirmed', '一部対応': 'Some options', '対応': 'Available', '未対応': 'Not available',
+      'あり': 'Available', 'なし': 'None', '無休': 'Open daily', '要確認': 'Please check',
+      '名工大周辺': 'Near NITech', '名古屋市代表': 'Nagoya highlight'
     };
     return dict[value] || value;
   }
-
   function walkingRouteUrl(feature) {
     const c = feature.geometry.coordinates;
     return 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(c[1] + ',' + c[0]) + '&travelmode=walking';
   }
-
   function createIcon(feature) {
     const cfg = configFor(feature);
+    const cityClass = scopeOf(feature) === '名古屋市代表' ? ' city-marker' : '';
     return L.divIcon({
       className: 'facility-div-icon',
-      html: '<div class="facility-marker" style="--marker-color:' + cfg.color + '"><i class="fas ' + cfg.icon + '"></i></div>',
-      iconSize: [32, 39], iconAnchor: [16, 36], popupAnchor: [0, -35]
+      html: '<div class="facility-marker' + cityClass + '" style="--marker-color:' + cfg.color + '"><i class="fas ' + cfg.icon + '"></i></div>',
+      iconSize: scopeOf(feature) === '名古屋市代表' ? [36, 43] : [32, 39],
+      iconAnchor: scopeOf(feature) === '名古屋市代表' ? [18, 40] : [16, 36],
+      popupAnchor: [0, -36]
     });
   }
 
@@ -183,25 +201,30 @@
     const cfg = configFor(feature);
     const t = uiText[language];
     const details = [];
+    if (p.area) details.push(['fa-map', t.area, p.area]);
+    if (p.ward) details.push(['fa-city', t.ward, p.ward]);
     if (p.address_ja) details.push(['fa-map-marker-alt', t.address, p.address_ja]);
+    if (p.nearest_station) details.push(['fa-subway', t.station, p.nearest_station]);
     if (p.opening_hours) details.push(['fa-clock', t.hours, p.opening_hours]);
-    if (p.closed_days) details.push(['fa-calendar-times', t.closed, p.closed_days]);
-    if (p.payment) details.push(['fa-credit-card', t.payment, p.payment]);
-    if (p.english_support) details.push(['fa-language', t.english, translatedValue(p.english_support)]);
-    if (p.vegetarian && p.vegetarian !== '未確認') details.push(['fa-leaf', t.vegetarian, translatedValue(p.vegetarian)]);
-    if (p.halal && p.halal !== '未確認') details.push(['fa-moon', t.halal, translatedValue(p.halal)]);
+    if (p.recommended_item) details.push(['fa-star', t.recommended, p.recommended_item]);
+    if (p.vegetarian_status && p.vegetarian_status !== '未確認') details.push(['fa-leaf', t.vegetarian, translatedValue(p.vegetarian_status)]);
+    if (p.halal_status && p.halal_status !== '未確認') details.push(['fa-moon', t.halal, translatedValue(p.halal_status)]);
+    if (p.notes) details.push(['fa-info-circle', t.note, p.notes]);
 
     const badges = [];
-    if (p.walk_min !== null && p.walk_min !== undefined && p.walk_min !== '') badges.push('<span class="popup-badge"><i class="fas fa-walking"></i> ' + t.walk + ' ' + safe(p.walk_min) + ' ' + t.min + '</span>');
+    if (p.distance_from_nitech_km !== null && p.distance_from_nitech_km !== undefined && p.distance_from_nitech_km !== '') {
+      badges.push('<span class="popup-badge"><i class="fas fa-route"></i> ' + t.distance + ' ' + safe(p.distance_from_nitech_km) + ' ' + t.km + '</span>');
+    }
     if (p.price_range) badges.push('<span class="popup-badge"><i class="fas fa-yen-sign"></i> ' + safe(p.price_range) + '</span>');
     if (p.minor_category) badges.push('<span class="popup-badge">' + safe(p.minor_category) + '</span>');
+    badges.push('<span class="popup-badge scope-badge">' + safe(scopeLabel(feature)) + '</span>');
 
     const officialClass = p.official_url ? '' : ' disabled';
     const officialHref = p.official_url ? safe(p.official_url) : '#';
 
     return '<article class="popup-card">' +
       '<div class="popup-header" style="background:' + cfg.color + '">' +
-        '<div class="popup-category">' + safe(language === 'en' ? cfg.en : cfg.ja) + '</div>' +
+        '<div class="popup-category">' + safe(language === 'en' ? cfg.en : cfg.ja) + ' · ' + safe(scopeLabel(feature)) + '</div>' +
         '<h3>' + safe(displayName(feature)) + '</h3>' +
         (secondaryName(feature) ? '<div class="popup-en-name">' + safe(secondaryName(feature)) + '</div>' : '') +
       '</div>' +
@@ -221,21 +244,44 @@
 
   function buildMarkers() {
     data.forEach(function (feature) {
+      if (!feature.geometry || !Array.isArray(feature.geometry.coordinates)) return;
       const c = feature.geometry.coordinates;
       const marker = L.marker([c[1], c[0]], { icon: createIcon(feature), title: displayName(feature) });
       marker.feature = feature;
-      marker.bindPopup(function () { return popupHtml(feature); }, { maxWidth: 360 });
+      marker.bindPopup(function () { return popupHtml(feature); }, { maxWidth: 380 });
       marker.on('click', function () {
-        selectedFid = String(feature.properties.fid);
+        selectedUid = uidOf(feature);
         highlightCard();
       });
-      markerByFid.set(String(feature.properties.fid), marker);
+      markerByUid.set(uidOf(feature), marker);
+    });
+  }
+
+  function renderScopeControls() {
+    const counts = { all: data.length };
+    data.forEach(function (f) { const s = scopeOf(f); counts[s] = (counts[s] || 0) + 1; });
+    els.scopes.innerHTML = '';
+    scopeOrder.forEach(function (scope) {
+      const cfg = scopeConfig[scope];
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'scope-chip' + (selectedScope === scope ? ' active' : '');
+      button.style.setProperty('--scope-color', cfg.color);
+      button.dataset.scope = scope;
+      button.innerHTML = '<i class="fas ' + cfg.icon + '"></i><span>' + safe(language === 'en' ? cfg.en : cfg.ja) + '</span><span class="count">' + (counts[scope] || 0) + '</span>';
+      button.addEventListener('click', function () {
+        selectedScope = scope;
+        applyFilters(true);
+      });
+      els.scopes.appendChild(button);
     });
   }
 
   function renderCategoryControls() {
+    const source = selectedScope === 'all' ? data : data.filter(function (f) { return scopeOf(f) === selectedScope; });
     const counts = {};
-    data.forEach(function (f) { const c = categoryOf(f); counts[c] = (counts[c] || 0) + 1; });
+    source.forEach(function (f) { const c = categoryOf(f); counts[c] = (counts[c] || 0) + 1; });
+    if (selectedCategory !== 'all' && !counts[selectedCategory]) selectedCategory = 'all';
     els.categories.innerHTML = '';
     categoryOrder.forEach(function (cat) {
       if (!counts[cat]) return;
@@ -255,20 +301,23 @@
   }
 
   function matches(feature) {
+    if (selectedScope !== 'all' && scopeOf(feature) !== selectedScope) return false;
     if (selectedCategory !== 'all' && categoryOf(feature) !== selectedCategory) return false;
     if (!query) return true;
     const p = feature.properties;
-    const haystack = [p.name_ja, p.name_en, p.address_ja, p.major_category, p.minor_category, p.description_ja, p.description_en]
+    const haystack = [p.name_ja, p.name_en, p.address_ja, p.area, p.ward, p.nearest_station, p.major_category, p.minor_category, p.description_ja, p.description_en, p.recommended_item]
       .filter(Boolean).join(' ').toLocaleLowerCase();
     return haystack.includes(query.toLocaleLowerCase());
   }
 
   function sortedFeatures(features) {
     return features.slice().sort(function (a, b) {
-      const av = Number(a.properties.walk_min); const bv = Number(b.properties.walk_min);
-      if (Number.isFinite(av) && Number.isFinite(bv)) return av - bv;
-      if (Number.isFinite(av)) return -1;
-      if (Number.isFinite(bv)) return 1;
+      const ap = Number(a.properties.app_priority); const bp = Number(b.properties.app_priority);
+      if (Number.isFinite(ap) && Number.isFinite(bp) && ap !== bp) return ap - bp;
+      const ad = Number(a.properties.distance_from_nitech_km); const bd = Number(b.properties.distance_from_nitech_km);
+      if (Number.isFinite(ad) && Number.isFinite(bd) && ad !== bd) return ad - bd;
+      if (Number.isFinite(ad) && !Number.isFinite(bd)) return -1;
+      if (!Number.isFinite(ad) && Number.isFinite(bd)) return 1;
       return displayName(a).localeCompare(displayName(b), language === 'ja' ? 'ja' : 'en');
     });
   }
@@ -283,14 +332,16 @@
     visibleFeatures.forEach(function (feature) {
       const p = feature.properties;
       const cfg = configFor(feature);
+      const uid = uidOf(feature);
       const card = document.createElement('article');
-      card.className = 'facility-card' + (selectedFid === String(p.fid) ? ' selected' : '');
-      card.dataset.fid = String(p.fid);
+      card.className = 'facility-card' + (selectedUid === uid ? ' selected' : '');
+      card.dataset.uid = uid;
       card.tabIndex = 0;
       const pills = [];
-      if (p.walk_min !== null && p.walk_min !== undefined && p.walk_min !== '') pills.push('<span class="meta-pill"><i class="fas fa-walking"></i>' + t.walk + ' ' + safe(p.walk_min) + ' ' + t.min + '</span>');
+      pills.push('<span class="meta-pill scope-' + (scopeOf(feature) === '名工大周辺' ? 'near' : 'city') + '"><i class="fas ' + (scopeOf(feature) === '名工大周辺' ? 'fa-university' : 'fa-city') + '"></i>' + safe(scopeLabel(feature)) + '</span>');
+      if (p.distance_from_nitech_km !== null && p.distance_from_nitech_km !== undefined && p.distance_from_nitech_km !== '') pills.push('<span class="meta-pill"><i class="fas fa-route"></i>' + t.distance + ' ' + safe(p.distance_from_nitech_km) + ' ' + t.km + '</span>');
+      if (p.area) pills.push('<span class="meta-pill">' + safe(p.area) + '</span>');
       if (p.minor_category) pills.push('<span class="meta-pill">' + safe(p.minor_category) + '</span>');
-      if (p.price_range) pills.push('<span class="meta-pill">' + safe(p.price_range) + '</span>');
       card.innerHTML = '<div class="card-top">' +
         '<div class="category-icon" style="--marker-color:' + cfg.color + '"><i class="fas ' + cfg.icon + '"></i></div>' +
         '<div class="card-copy"><h2>' + safe(displayName(feature)) + '</h2>' +
@@ -306,32 +357,29 @@
   }
 
   function highlightCard() {
-    document.querySelectorAll('.facility-card').forEach(function (el) { el.classList.toggle('selected', el.dataset.fid === selectedFid); });
+    document.querySelectorAll('.facility-card').forEach(function (el) { el.classList.toggle('selected', el.dataset.uid === selectedUid); });
   }
-
   function focusFeature(feature) {
-    const fid = String(feature.properties.fid);
-    selectedFid = fid;
-    const marker = markerByFid.get(fid);
+    const uid = uidOf(feature);
+    selectedUid = uid;
+    const marker = markerByUid.get(uid);
     if (!marker) return;
     const latlng = marker.getLatLng();
-    map.flyTo(latlng, Math.max(map.getZoom(), 17), { duration: .55 });
+    map.flyTo(latlng, Math.max(map.getZoom(), 16), { duration: .55 });
     cluster.zoomToShowLayer(marker, function () { marker.openPopup(); });
     highlightCard();
   }
-
   function updateMapLayers() {
     cluster.clearLayers();
     visibleFeatures.forEach(function (f) {
-      const marker = markerByFid.get(String(f.properties.fid));
+      const marker = markerByUid.get(uidOf(f));
       if (marker) {
         marker.setIcon(createIcon(f));
-        marker.setTooltipContent && marker.setTooltipContent(displayName(f));
+        marker.options.title = displayName(f);
         cluster.addLayer(marker);
       }
     });
   }
-
   function updateText() {
     const t = uiText[language];
     document.documentElement.lang = language;
@@ -339,6 +387,7 @@
     els.subtitle.textContent = t.subtitle;
     els.languageText.textContent = t.language;
     els.search.placeholder = t.search;
+    els.scopeHeading.textContent = t.scope;
     els.categoryHeading.textContent = t.category;
     els.resetFilters.textContent = t.reset;
     els.resultUnit.textContent = t.unit;
@@ -347,32 +396,30 @@
     els.fitAllLabel.textContent = t.fitAll;
     if (locate && locate.options && locate.options.strings) locate.options.strings.title = t.locationTitle;
   }
-
   function renderLegend() {
-    els.legend.innerHTML = categoryOrder.map(function (cat) {
+    const present = new Set(visibleFeatures.map(categoryOf));
+    els.legend.innerHTML = categoryOrder.filter(function (cat) { return present.has(cat); }).map(function (cat) {
       const cfg = categoryConfig[cat];
       return '<span class="legend-item"><span class="legend-dot" style="background:' + cfg.color + '"></span>' + safe(language === 'en' ? cfg.en : cfg.ja) + '</span>';
     }).join('');
   }
-
   function applyFilters(fit) {
     visibleFeatures = sortedFeatures(data.filter(matches));
     els.resultCount.textContent = visibleFeatures.length;
     els.clearSearch.classList.toggle('visible', !!query);
+    renderScopeControls();
     renderCategoryControls();
     updateMapLayers();
     renderList();
     renderLegend();
     if (fit && visibleFeatures.length) fitVisible();
   }
-
   function fitVisible() {
-    const layers = visibleFeatures.map(function (f) { return markerByFid.get(String(f.properties.fid)); }).filter(Boolean);
+    const layers = visibleFeatures.map(function (f) { return markerByUid.get(uidOf(f)); }).filter(Boolean);
     if (!layers.length) return;
     const group = L.featureGroup(layers);
-    map.fitBounds(group.getBounds().pad(.18), { maxZoom: 16 });
+    map.fitBounds(group.getBounds().pad(.10), { maxZoom: selectedScope === '名工大周辺' ? 15 : 13 });
   }
-
   let toastTimer;
   function showToast(message) {
     clearTimeout(toastTimer);
@@ -384,7 +431,7 @@
   els.search.addEventListener('input', function () { query = els.search.value.trim(); applyFilters(false); });
   els.clearSearch.addEventListener('click', function () { els.search.value = ''; query = ''; els.search.focus(); applyFilters(false); });
   els.resetFilters.addEventListener('click', function () {
-    selectedCategory = 'all'; query = ''; els.search.value = ''; applyFilters(true); showToast(uiText[language].allShown);
+    selectedScope = 'all'; selectedCategory = 'all'; query = ''; els.search.value = ''; applyFilters(true); showToast(uiText[language].allShown);
   });
   els.fitAll.addEventListener('click', fitVisible);
   els.languageToggle.addEventListener('click', function () {
@@ -392,12 +439,13 @@
     localStorage.setItem('nitemap-language', language);
     updateText();
     applyFilters(false);
-    map.eachLayer(function (layer) {
-      if (layer.feature && layer.getPopup && layer.getPopup()) layer.setPopupContent(popupHtml(layer.feature));
+    markerByUid.forEach(function (marker) {
+      if (marker.feature && marker.getPopup && marker.getPopup()) marker.setPopupContent(popupHtml(marker.feature));
     });
   });
 
   buildMarkers();
   updateText();
   applyFilters(false);
+  fitVisible();
 })();

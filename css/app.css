@@ -182,3 +182,27 @@ button { cursor: pointer; }
   .popup-actions { grid-template-columns: 1fr; }
   .sidebar { flex-basis: 45%; max-height: 50%; }
 }
+
+
+/* Nagoya-wide edition additions */
+.filter-block { margin-top: 13px; }
+.scope-filters { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; }
+.scope-chip {
+  --scope-color: var(--brand);
+  min-width: 0; border: 1px solid #d5dfe1; border-radius: 11px; background: #fff;
+  color: #334348; padding: 8px 7px; display: inline-flex; align-items: center;
+  justify-content: center; gap: 5px; font-size: 11px; font-weight: 800; transition: .16s ease;
+}
+.scope-chip i { color: var(--scope-color); }
+.scope-chip .count { color: #7b898d; font-size: 10px; }
+.scope-chip.active { color: #fff; border-color: var(--scope-color); background: var(--scope-color); box-shadow: 0 4px 12px rgba(11,93,85,.18); }
+.scope-chip.active i, .scope-chip.active .count { color: #fff; }
+.city-marker { border-width: 3px; box-shadow: 0 0 0 2px rgba(255,255,255,.75), 0 4px 12px rgba(0,0,0,.34); }
+.meta-pill.scope-near { background: #e5f4f1; color: #0b5d55; }
+.meta-pill.scope-city { background: #eee7f8; color: #65449a; }
+.scope-badge { font-weight: 800; }
+@media (max-width: 820px) {
+  .filter-block { margin-top: 8px; }
+  .scope-chip { padding: 6px 5px; font-size: 10px; }
+  .scope-chip .count { display: none; }
+}
