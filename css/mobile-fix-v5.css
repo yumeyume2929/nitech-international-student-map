@@ -1,0 +1,52 @@
+/* Mobile no-jump detail sheet. This file has a unique name to bypass caches. */
+.mobile-detail-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(13, 35, 34, 0.38);
+  padding: 12px;
+}
+.mobile-detail-backdrop[hidden] { display: none !important; }
+.mobile-detail-sheet {
+  position: relative;
+  width: min(100%, 560px);
+  max-height: min(78dvh, 680px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  border-radius: 18px 18px 12px 12px;
+  background: #fff;
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.24);
+  -webkit-overflow-scrolling: touch;
+}
+.mobile-detail-content .popup-card { margin: 0; box-shadow: none; }
+.mobile-detail-close {
+  position: sticky;
+  top: 8px;
+  float: right;
+  z-index: 2;
+  width: 38px;
+  height: 38px;
+  margin: 8px 8px -46px 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.94);
+  color: #183b38;
+  box-shadow: 0 2px 12px rgba(0,0,0,.18);
+  font-size: 17px;
+}
+body.mobile-detail-open { overflow: hidden; }
+@media (min-width: 821px) {
+  .mobile-detail-backdrop { display: none !important; }
+}
+
+
+/* Latest three-scope edition */
+.scope-filters { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.support-marker { border: 3px solid #263238; box-shadow: 0 0 0 2px rgba(255,255,255,.82), 0 5px 14px rgba(0,0,0,.38); }
+.meta-pill.scope-support { background: #f8e8eb; color: #9c2e40; }
+@media (max-width: 820px) {
+  .scope-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'nitech-life-map-pwa-v1';
+const CACHE_VERSION = 'nitech-life-map-pwa-v5';
 const APP_SHELL = [
   './',
   './index.html',
@@ -9,14 +9,14 @@ const APP_SHELL = [
   './css/L.Control.Locate.min.css',
   './css/fontawesome-all.min.css',
   './css/app.css',
-  './css/mobile-fix-v3.css',
+  './css/mobile-fix-v5.css',
   './css/pwa.css',
   './js/leaflet.js',
   './js/leaflet.markercluster.js',
   './js/L.Control.Locate.min.js',
-  './js/app-mobile-v3.js',
+  './js/app-mobile-v5.js',
   './js/pwa-install.js',
-  './data/facilities.js',
+  './data/facilities-v5.js',
   './webfonts/fa-solid-900.woff2',
   './icons/icon-192.png',
   './icons/icon-512.png',
@@ -57,7 +57,7 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  if (url.pathname.endsWith('/data/facilities.js')) {
+  if (url.pathname.endsWith('/data/facilities-v5.js')) {
     event.respondWith(networkFirst(request));
     return;
   }

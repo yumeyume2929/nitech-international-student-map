@@ -2,7 +2,7 @@
   "id": "./",
   "name": "NITech International Student Life Map",
   "short_name": "NITech Life Map",
-  "description": "A bilingual life support map for international students around NITech and Nagoya.",
+  "description": "A bilingual life support map for international students, covering food, shopping, medical care, government procedures, postal services, study, disaster preparedness and sightseeing in Nagoya.",
   "lang": "ja",
   "start_url": "./",
   "scope": "./",
